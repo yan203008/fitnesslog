@@ -22,13 +22,14 @@ function recordPage(id){const t=typeById(id);if(!t)return go('home');if(!draft||
 function captureDraft(){const form=$('#record-form');if(!form||!draft)return;const data=new FormData(form),t=typeById(draft.typeId);draft.date=data.get('date');if(t.kind==='other')draft.name=String(data.get('sportName')||'').trim()||t.name;for(const key of t.fields){const v=data.get(key);if(v==null||v==='')delete draft.values[key];else draft.values[key]=['notes','startTime'].includes(key)?String(v):Number(v);}}
 function history(){
  if(sportFilter&&!typeById(sportFilter))sportFilter='';
- const rs=monthRecords(state,month).filter(r=>!sportFilter||r.typeId===sportFilter),counts=monthCounts(state,month);
+ const allRecords=monthRecords(state,month),rs=allRecords.filter(r=>!sportFilter||r.typeId===sportFilter),counts=monthCounts(state,month);
  const name=sportFilter?typeById(sportFilter).name:'运动';
  const dayRecords=selectedDate?rs.filter(r=>r.date===selectedDate):[];
  frame('历史',`<div class="month-switch"><button data-month="-1" aria-label="上一个月">‹</button><span>${Number(month.slice(0,4))}年${Number(month.slice(5))}月</span><button data-month="1" aria-label="下一个月">›</button></div>
- <div class="sport-filters" role="group" aria-label="按运动筛选">${[{id:'',name:'全部'},...state.types].map(t=>`<button data-filter="${esc(t.id)}" aria-pressed="${sportFilter===t.id}">${esc(t.name)}</button>`).join('')}</div>
- <section class="month-summary"><h2>${month===today().slice(0,7)?'本月':'当月'}${esc(name)} <b>${rs.length}</b> 次</h2>${!sportFilter&&counts.length?counts.map(c=>`<div class="count-row"><span>${esc(c.name)}</span><span>${c.count}</span></div>`).join(''):''}${!rs.length?'<p class="subtle">这个月还没有'+esc(sportFilter?name:'运动')+'记录</p>':''}</section>
+
+ <section class="month-summary"><h2>${month===today().slice(0,7)?'本月':'当月'}运动 <b>${allRecords.length}</b> 次</h2>${counts.length?counts.map(c=>`<div class="count-row"><span>${esc(c.name)}</span><span>${c.count}</span></div>`).join(''):''}${!allRecords.length?'<p class="subtle">这个月还没有运动记录</p>':''}</section>
  ${calendar(rs)}
+ <div class="sport-filters" role="group" aria-label="按运动筛选">${[{id:'',name:'全部'},...state.types].map(t=>`<button data-filter="${esc(t.id)}" aria-pressed="${sportFilter===t.id}">${esc(t.name)}</button>`).join('')}</div>
  ${selectedDate?`<section class="selected-day" aria-label="当天记录"><div class="selected-day-heading"><h2>${dateText(selectedDate)} · ${dayRecords.length}次${sportFilter?' '+esc(name):'运动'}</h2><button class="text-button" data-action="clear-date" aria-label="关闭当天记录">关闭</button></div>${dayRecords.length?dayRecords.map(r=>`<a class="activity-row" href="#detail/${r.id}"><span class="activity-name">${esc(recordLabel(state,r))}</span><span class="chevron" aria-hidden="true">›</span></a>`).join(''):`<p class="subtle">这一天没有${sportFilter?esc(name):'运动'}记录。</p>`}</section>`:''}
  <section class="monthly-records"><div class="section-title"><h2>当月${sportFilter?esc(name):''}记录</h2></div>${rs.length?`<div class="activity-list">${rs.map(recordRow).join('')}</div>`:'<p class="empty">这个月的记录会显示在这里。</p>'}</section>
  <a class="library-entry" href="#library"><span>力量训练动作库</span><span class="chevron">›</span></a>`,{tab:'history'});
