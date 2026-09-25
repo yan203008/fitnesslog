@@ -70,3 +70,7 @@ button.calendar-day.weekend{color:#7c8478}
 .monthly-records .activity-row,.selected-day .activity-row{font-size:17px;min-height:56px;padding:12px 0}
 .monthly-records .activity-row time{font-size:17px}
 .monthly-records .activity-name,.selected-day .activity-name{font-weight:500}
+
+.sport-filters{flex-wrap:nowrap;overflow-x:auto;padding:4px 2px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.sport-filters::-webkit-scrollbar{display:none}
+.sport-filters button{flex:0 0 auto;white-space:nowrap;max-width:none}

@@ -1,5 +1,5 @@
-const CACHE='fitnesslog-v3';
-const ASSETS=['./','index.html','movement.css?v=5','movement.js?v=5','movement-core.mjs','manifest.webmanifest?v=movement1','icons/apple-touch-icon.png?v=fitness1','icons/icon-192.png?v=fitness1','icons/icon-512.png?v=fitness1','icons/icon-maskable-512.png?v=fitness1'];
+const CACHE='fitnesslog-v4';
+const ASSETS=['./','index.html','movement.css?v=6','movement.js?v=6','movement-core.mjs','manifest.webmanifest?v=movement1','icons/apple-touch-icon.png?v=fitness1','icons/icon-192.png?v=fitness1','icons/icon-512.png?v=fitness1','icons/icon-maskable-512.png?v=fitness1'];
 self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('fitnesslog-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
 self.addEventListener('fetch',e=>{if(e.request.method!=='GET'||new URL(e.request.url).origin!==self.location.origin)return;e.respondWith(fetch(e.request).then(response=>{if(response.ok){const copy=response.clone();caches.open(CACHE).then(c=>c.put(e.request,copy));}return response;}).catch(()=>caches.open(CACHE).then(c=>c.match(e.request).then(r=>r||(e.request.mode==='navigate'?c.match('./'):Response.error())))));});
